@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>a lazyman</title>
+	</head>
+	<body>
+		<script>
+			function lazyMan(name){
+				return new lazyman(name);
+			}
+			var lazyman = function(name){
+				this.tasks = [];
+				var self = this;
+				var fn = (function(){
+					return function(){
+						console.log('hello '+name);
+						self.next();
+					}
+				})(name);
+				this.tasks.push(fn);
+				setTimeout(function(){
+					self.next();
+				},0);
+				// console.log(self.tasks);
+			}
+			lazyman.prototype.next = function(){
+				var fn = this.tasks.shift();
+				fn&&fn();
+			};
+			lazyman.prototype.eat = function(food){
+				var self = this;
+				var fn = (function(food){
+					return function(){
+						console.log('eat '+food);
+						self.next();
+					}	
+				})(food);
+				this.tasks.push(fn);
+				return this;
+			};
+			lazyman.prototype.sleep = function(time){
+				var self = this;
+				var fn = (function(time){
+					return function(){
+						setTimeout(function(){
+							console.log('sleep '+time);
+							self.next();
+						},time*1000);
+					}
+				})(time);
+				this.tasks.push(fn);
+				return this;
+			};
+			
+			lazyMan('zz').eat('lunch').sleep(3).eat('dinner');
+		</script>
+	</body>
+</html>
